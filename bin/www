@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('projectx:server');
+var debug = require('debug')('express-mongo-template:server');
 var http = require('http');
 
 /**
@@ -87,5 +87,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
-  console.log(`Server listening on port ${process.env.PORT}`);
+  console.log(`Server listening on ${addr.port}`);
 }
