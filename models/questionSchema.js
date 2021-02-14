@@ -12,4 +12,4 @@ const schema = new mongoose.Schema({
     },
     answer: Number
 });
-module.exports.QuestionModel = mongoose.model('question', schema);
+module.exports.QuestionModel = schema

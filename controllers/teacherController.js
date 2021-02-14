@@ -3,7 +3,7 @@ const { statModel } = require("../models/stats");
 
 module.exports.createQuestionSet = async (req, res) => {
     const questionSet = {
-        teacherid: req.body.userId,
+        teacherId: req.body.userId,
         questions: req.body.questions
     };
     if (req.body.duration) questionSet.duration = req.body.duration;
@@ -27,9 +27,10 @@ module.exports.createQuestionSet = async (req, res) => {
 
 module.exports.getExamStats = async (req, res) => {
     const teacherId = req.body.userId;
-    const examuuid = req.body.uuid;
+    const examuuid = req.params.uuid;
     try {
         const stats = await statModel.find({ teacherId: teacherId, examId: examuuid });
+        console.log(stats);
         res.status(200).json({
             examstats: stats[0].stats
         });

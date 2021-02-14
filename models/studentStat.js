@@ -6,4 +6,4 @@ const schema = new mongoose.Schema({
     answers: [Number],
     marks: Number
 });
-module.exports.singleStudentStat = mongoose.model('singlestat', schema);
+module.exports.singleStudentStat = schema

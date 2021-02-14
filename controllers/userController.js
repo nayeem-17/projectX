@@ -35,21 +35,23 @@ module.exports.getQuestions = async (req, res) => {
         const userId = req.body.userId;
         const examId = req.params.examId;
         const questionSet = await QuestionSetModel.find({ uuid: examId });
-        questionSet.studentId.push(userId);
-        await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet, {
+        console.log(questionSet)
+        questionSet[0].studentId.push(userId);
+        await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
             new: true,
             useFindAndModify: true
         });
+
         res.json({
-            questions: questionSet.questions
-        })
+            questions: questionSet[0].questions
+        });
 
     } catch (error) {
         res.status(403).json({ error: error })
     }
 }
 
-module.existingUser.submitAnswers = async (req, res) => {
+module.exports.submitAnswers = async (req, res) => {
     try {
         const userId = req.body.userId;
         const examId = req.params.examId;

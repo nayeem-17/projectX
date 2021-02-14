@@ -1,6 +1,6 @@
 const { QuestionSetModel } = require("../models/questionset")
 
-module.exports.checkanswer = (examId, answerScript) => {
+module.exports.checkanswer = async (examId, answerScript) => {
     try {
         const questions = await QuestionSetModel.find({ uuid: examId })[0].questions;
         let marks = 0;
