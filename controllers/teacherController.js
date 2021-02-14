@@ -9,6 +9,10 @@ module.exports.createQuestionSet = async (req, res) => {
     if (req.body.duration) questionSet.duration = req.body.duration;
     try {
         const data = await QuestionSetModel.create(questionSet);
+        await statModel.create({
+            teacherId: req.body.userId,
+            examId: data.uuid
+        });
         res.status(200).json({
             uuid: data.uuid,
             isSuccessful: true

@@ -1,6 +1,9 @@
 const crypto = require('crypto')
 const { makeHash } = require("../authentication/authServices");
+const { QuestionSetModel } = require('../models/questionset');
+const { statModel } = require('../models/stats');
 const { UserModel } = require("../models/userSchema");
+const { checkanswer } = require('../services/marking');
 
 module.exports.userReg = async (req, res) => {
     try {
@@ -28,11 +31,46 @@ module.exports.userReg = async (req, res) => {
 }
 
 module.exports.getQuestions = async (req, res) => {
-    res.json({
-        questions: " Bazzinga!"
-    })
+    try {
+        const userId = req.body.userId;
+        const examId = req.params.examId;
+        const questionSet = await QuestionSetModel.find({ uuid: examId });
+        questionSet.studentId.push(userId);
+        await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet, {
+            new: true,
+            useFindAndModify: true
+        });
+        res.json({
+            questions: questionSet.questions
+        })
+
+    } catch (error) {
+        res.status(403).json({ error: error })
+    }
 }
 
 module.existingUser.submitAnswers = async (req, res) => {
-
+    try {
+        const userId = req.body.userId;
+        const examId = req.params.examId;
+        const answerScript = req.body.answers;
+        const marks = checkanswer(examId, answerScript);
+        const userStat = {
+            marks: marks,
+            studentId: userId,
+            answers: answerScript,
+            examid: examId
+        };
+        const stat = await statModel.find({ examId: examId });
+        stat[0].stats.push(userStat);
+        await statModel.findOneAndUpdate({ uuid: examId }, stat[0], {
+            new: true,
+            useFindAndModify: true
+        });
+        res.json({
+            isSuccessful: true
+        })
+    } catch (error) {
+        res.status(403).json({ error: error })
+    }
 }
