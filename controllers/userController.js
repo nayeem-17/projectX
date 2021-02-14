@@ -32,3 +32,7 @@ module.exports.getQuestions = async (req, res) => {
         questions: " Bazzinga!"
     })
 }
+
+module.existingUser.submitAnswers = async (req, res) => {
+
+}

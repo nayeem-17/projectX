@@ -4,7 +4,7 @@ const router = express.Router()
 
 router.post('/createquestionset', createQuestionSet)
 router.post('/getexamstats', getExamStats)
-router.patch('/updatequestions', updateQuestionSet)
+router.patch('/updatequestions/:examid', updateQuestionSet)
 router.delete('/deleteallstats', deleteAllStats)
 router.delete('/deletestat/:id', deleteStat)
 
