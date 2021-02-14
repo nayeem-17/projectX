@@ -1,11 +1,12 @@
 const express = require('express')
 const { isValidJWTToken } = require('../authentication/authMiddlewares');
-const { userReg, getQuestions } = require('../controllers/userController');
+const { userReg, getQuestions, submitAnswers } = require('../controllers/userController');
 const router = express.Router()
 
 router.post('/registration', userReg);
 router.use(isValidJWTToken);
 
-router.post('/getquestions', getQuestions);
+router.post('/getquestionset', getQuestions);
+router.post('/submit', submitAnswers)
 
 module.exports = router
