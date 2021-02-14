@@ -8,7 +8,7 @@ const logger = require('morgan');
 const helmet = require('helmet')
 require('dotenv').config()
 
-const indexRouter = require('./routes/index');
+const teacherRouter = require('./routes/teacher');
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
 const limiter = require('./services/rateLimiter');
@@ -63,8 +63,7 @@ const swaggerDocs = swaggerJsdoc(options)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 
-
-app.use('/', indexRouter);
+app.use('/teacher', teacherRouter);
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 
