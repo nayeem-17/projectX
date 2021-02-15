@@ -65,7 +65,7 @@ module.exports.updateQuestionSet = async (req, res) => {
                 uuid: examId
             }, updated, {
                 new: true,
-                useFindAndModify: true
+                useFindAndModify: false
             });
             res.status(200).send({
                 message: "updated"

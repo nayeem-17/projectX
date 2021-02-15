@@ -43,19 +43,29 @@ const options = {
   swaggerDefinition: {
     openapi: "3.0.1",
     info: {
-      title: "Backend API",
-      description: "THis is a simple api created by using Express framework .Swagger is used auto-documetation.",
+      title: "Project-x-01   API",
+      description: "This api is created by using Express framework .Swagger is used for auto-documetation.",
       version: "1.0.0",
       servers: [`http://localhost:${process.env.PORT}`],
       contact: {
         name: "dude"
       }
     },
+    components: {
+      securitySchemes: {
+        bearAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          in: "header",
+        },
+      },
+    }
   },
   apis: [
     "*.js",
     "./models/*.js",
-    "./router/*js"
+    "./routes/*js"
   ]
 
 };
