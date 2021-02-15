@@ -26,7 +26,7 @@ const router = express.Router()
 *                type: string
 *                example: abc123
 *    tags:
-*      - "user"
+*      - "auth"
  */
 
 router.post('/token', login, getAccessToken);
