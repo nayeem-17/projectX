@@ -7,6 +7,6 @@ router.post('/registration', userReg);
 router.use(isValidJWTToken);
 
 router.post('/getquestionset/:examId', getQuestions);
-router.post('/submit', submitAnswers)
+router.post('/submit/:examId', submitAnswers)
 
 module.exports = router

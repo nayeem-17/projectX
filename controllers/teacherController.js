@@ -30,7 +30,6 @@ module.exports.getExamStats = async (req, res) => {
     const examuuid = req.params.uuid;
     try {
         const stats = await statModel.find({ teacherId: teacherId, examId: examuuid });
-        console.log(stats);
         res.status(200).json({
             examstats: stats[0].stats
         });
@@ -43,13 +42,14 @@ module.exports.getExamStats = async (req, res) => {
 module.exports.updateQuestionSet = async (req, res) => {
     const examId = req.params.examid;
     const questions = await QuestionSetModel.find({ teacherId: req.body.userId, uuid: examId });
+    console.log(questions);
     if (questions.length == 0) {
         res.status(403).json({
             error: "No exam found!"
         })
     }
-    else if (questions.studentId.length > 0) {
-        res.stats(401).json({
+    else if (questions[0].studentId.length > 0) {
+        res.status(401).json({
             error: "Cannot modify the questions."
         })
     } else {

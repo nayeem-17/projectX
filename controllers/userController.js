@@ -34,14 +34,14 @@ module.exports.getQuestions = async (req, res) => {
     try {
         const userId = req.body.userId;
         const examId = req.params.examId;
-        const questionSet = await QuestionSetModel.find({ uuid: examId });
+        let questionSet = await QuestionSetModel.find({ uuid: examId });
         console.log(questionSet)
         questionSet[0].studentId.push(userId);
         await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
             new: true,
-            useFindAndModify: true
-        });
+            useFindAndModify: false
 
+        });
         res.json({
             questions: questionSet[0].questions
         });
@@ -56,7 +56,7 @@ module.exports.submitAnswers = async (req, res) => {
         const userId = req.body.userId;
         const examId = req.params.examId;
         const answerScript = req.body.answers;
-        const marks = checkanswer(examId, answerScript);
+        const marks = await checkanswer(examId, answerScript);
         const userStat = {
             marks: marks,
             studentId: userId,
@@ -65,12 +65,13 @@ module.exports.submitAnswers = async (req, res) => {
         };
         const stat = await statModel.find({ examId: examId });
         stat[0].stats.push(userStat);
-        await statModel.findOneAndUpdate({ uuid: examId }, stat[0], {
+        const data = await statModel.findByIdAndUpdate(stat[0]._id, stat[0], {
             new: true,
-            useFindAndModify: true
+            useFindAndModify: false
         });
         res.json({
-            isSuccessful: true
+            isSuccessful: true,
+            marks: marks
         })
     } catch (error) {
         res.status(403).json({ error: error })
