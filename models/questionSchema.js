@@ -7,7 +7,7 @@ const schema = new mongoose.Schema({
             validator: (options) => {
                 return options.length == 4;
             },
-            message: 'dadaaa'
+            message: 'The number of options should 4'
         }
     },
     answer: Number
