@@ -13,22 +13,3 @@ const schema = new mongoose.Schema({
     answer: Number
 });
 module.exports.QuestionModel = schema
-
-/**
- * @swagger
- * components:
- *      schemas:
- *          questionSchema:
- *              properties:
- *                  question:
- *                      type: string
- *                      example: "How you doin"
- *                  answer:
- *                      type: integer
- *                      example: 3
- *                  options:
- *                      type: array
- *                      items:
- *                          type: string
- *                      example: ["option one", "option two", "option three","option four"]
- */

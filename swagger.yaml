@@ -1,0 +1,278 @@
+openapi: "3.0.2"
+info:
+  title: "Project-x-01   API"
+  description: "This api is created by using Express framework .Swagger is used for auto-documetation."
+  version: "1.0.0"
+  contact:
+    name: "dude"
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /auth/token:
+    post:
+      responses:
+        "200":
+          description: ok
+        "400":
+          description: error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: cooper
+                password:
+                  type: string
+                  example: abc123
+      tags:
+        - "auth"
+
+  /user/getquestionset/{examId}:
+    post:
+      tags:
+        - "user"
+      security:
+        - bearAuth: []
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+      parameters:
+        - in: path
+          name: examId
+          required: true
+          schema:
+            type: string
+          example: 13evwe34
+
+  /user/submit/{examId}:
+    post:
+      tags:
+        - "user"
+      security:
+        - bearAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+              example: [1, 2, 1, 4, 2, 3, 1, 2]
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+      parameters:
+        - in: path
+          name: examId
+          required: true
+          schema:
+            type: string
+          example: 13evwe34
+
+  /teacher/getexamstats/{uuid}:
+    post:
+      tags:
+        - "teacher"
+      security:
+        - bearAuth: []
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            example: 341fvdju
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+
+  /teacher/createquestionset:
+    post:
+      tags:
+        - "teacher"
+      security:
+        - bearAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                duration:
+                  type: integer
+                  example: 15
+                questions:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/questionSchema"
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+
+  /teacher/updatequestions/{uuid}:
+    patch:
+      tags:
+        - "teacher"
+      security:
+        - bearAuth: []
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            example: 341fvdju
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/questionSchema"
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+
+  /teacher/deletestat/{id}:
+    delete:
+      tags:
+        - "teacher"
+      security:
+        - bearAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: 341fvdju
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+
+  /teacher/deleteallstats:
+    delete:
+      tags:
+        - "teacher"
+      security:
+        - bearAuth: []
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+
+  /user/registration:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: cooper
+                email:
+                  type: string
+                  example: abc@gmail.com
+                password:
+                  type: string
+                  example: abc123
+      tags:
+        - "user"
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
+
+components:
+  schemas:
+    questionSchema:
+      properties:
+        question:
+          type: string
+          example: "How you doin"
+        answer:
+          type: integer
+          example: 3
+        options:
+          type: array
+          items:
+            type: string
+          example: ["option one", "option two", "option three", "option four"]
+    singleStudentStatSchema:
+      properties:
+        studentId:
+          type: string
+          example: 2wdftyhjk5678iujk098uygvbhreswefcv
+        examid:
+          type: string
+          example: 12exaef13
+        marks:
+          type: integer
+          example: 50
+        answers:
+          type: array
+          items:
+            type: integer
+          example: [1, 2, 4, 1, 2]
+
+    questionSetSchema:
+      properties:
+        teacherId:
+          type: string
+        studentId:
+          type: array
+          items:
+            type: string
+        uuid:
+          type: string
+          description: auto-generated unique id
+        duration:
+          type: integer
+          description: duration in mintues
+          example: 15
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/questionSchema"
+    statSchema:
+      properties:
+        teacherId:
+          type: string
+          example: 2wdftyhjk5678iujk098uygvbhreswefcv
+        examId:
+          type: string
+          example: 12exaef13
+        stats:
+          type: array
+          items:
+            $ref: "#/components/schemas/singleStudentStatSchema"
+  securitySchemes:
+    bearAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
