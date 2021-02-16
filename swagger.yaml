@@ -4,9 +4,9 @@ info:
   description: "This api is created by using Express framework .Swagger is used for auto-documetation."
   version: "1.0.0"
   contact:
-    name: "dude"
+    name: "naim"
 servers:
-  - url: http://localhost:8080
+  - url: https://project-x-01.herokuapp.com/
 
 paths:
   /auth/token:
