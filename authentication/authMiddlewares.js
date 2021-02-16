@@ -3,25 +3,29 @@ const { UserModel } = require('../models/userSchema');
 const { isPasswordValid } = require('./authServices');
 
 module.exports.login = async (req, res, next) => {
-    const { username, password } = req.body;
+    const { email, username, password } = req.body;
     // Fetching userData from database 
-    const userInfo = await UserModel.find({ username: username });
-    if (!userInfo) res.json({ error: 'No account found with this username' });
-    const hashPass = userInfo[0].password;
-
-    //  Add more info if needed
-
-    const { userId, email } = userInfo[0];
-
-    if (hashPass && isPasswordValid(hashPass, password)) {
-        req.body = {
-            userId: userId,
-            username: username,
-            email: email
-        }
-        next();
+    if (email) console.log(email);
+    let userInfo;
+    if (email) userInfo = await UserModel.find({ email: email })
+    else userInfo = await UserModel.find({ username: username })
+    if (userInfo.length == 0) {
+        return res.json({ error: 'No account found with this username' });
     } else {
-        res.status(400).send({ errors: ['Invalid email or password'] });
+
+        const hashPass = userInfo[0].password;
+        const { userId, email } = userInfo[0];
+
+        if (hashPass && isPasswordValid(hashPass, password)) {
+            req.body = {
+                userId: userId,
+                username: username,
+                email: email
+            }
+            next();
+        } else {
+            res.status(400).send({ errors: ['Invalid password'] });
+        }
     }
 }
 module.exports.isValidJWTToken = (req, res, next) => {
