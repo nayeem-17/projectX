@@ -7,7 +7,7 @@ info:
     name: "naim"
 servers:
   - url: https://project-x-01.herokuapp.com/
-
+  # - url: http://localhost:8080
 paths:
   /auth/token:
     post:

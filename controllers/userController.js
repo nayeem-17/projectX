@@ -11,8 +11,11 @@ module.exports.userReg = async (req, res) => {
         const hashPassword = makeHash(password);
         if (!email) return res.status(401).json({ error: 'No email' });
         if (!username) return res.status(401).json({ error: 'No username' });
-        const existingUser = await UserModel.find({ username: username });
-        if (existingUser[0]) return res.json({ error: ' Username exists!' });
+        const existingUsername = await UserModel.find({ username: username });
+        if (existingUsername[0]) return res.json({ error: ' Username exists!' });
+        const existingEmail = await UserModel.find({ email: email });
+        // console.log(existingEmail);
+        if (existingEmail.length) return res.json({ error: ' Email exists!' });
         const userInfo = {
             username: username,
             email: email,
