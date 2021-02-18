@@ -24,7 +24,7 @@ module.exports.login = async (req, res, next) => {
             }
             next();
         } else {
-            res.status(400).send({ errors: ['Invalid password'] });
+            res.status(400).send({ error: ['Invalid password'] });
         }
     }
 }
