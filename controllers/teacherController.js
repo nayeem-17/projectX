@@ -8,11 +8,17 @@ module.exports.createQuestionSet = async (req, res) => {
     };
     if (req.body.duration) questionSet.duration = req.body.duration;
     try {
+
         const data = await QuestionSetModel.create(questionSet);
+        // creating exam stat
         await statModel.create({
             teacherId: req.body.userId,
             examId: data.uuid
         });
+        // updating dashboard
+        let dashboard = await dashboardModel.find({ userId: req.body.userId })[0];
+        dashboard.myquestionId.push(data.uuid)
+        // sending response
         res.status(200).json({
             uuid: data.uuid,
             isSuccessful: true

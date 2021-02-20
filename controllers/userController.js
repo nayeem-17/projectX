@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const { makeHash } = require("../authentication/authServices");
+const { dashboardModel } = require('../models/dashboard');
 const { QuestionSetModel } = require('../models/questionset');
 const { statModel } = require('../models/stats');
 const { UserModel } = require("../models/userSchema");
@@ -22,7 +23,10 @@ module.exports.userReg = async (req, res) => {
             password: hashPassword,
             userId: crypto.randomBytes(32).toString('base64')
         }
+        // creating user
         const data = await UserModel.create(userInfo);
+        // creating dashboard
+        await dashboardModel.create({ userId: data.userId });
         res.status(200).json({
             isSuccessful: true,
             userId: data.userId
@@ -37,14 +41,28 @@ module.exports.getQuestions = async (req, res) => {
     try {
         const userId = req.body.userId;
         const examId = req.params.examId;
+        // updating stat
         let questionSet = await QuestionSetModel.find({ uuid: examId });
-        console.log(questionSet)
+        // console.log(questionSet)
         questionSet[0].studentId.push(userId);
         await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
             new: true,
             useFindAndModify: false
 
         });
+        // updating dashboard
+
+        let userDashBoard = await dashboardModel.find({ userId: userId })[0];
+        userDashBoard.exams.push({
+            questionId: examId,
+            marks: 0
+        });
+        await dashboardModel.findOneAndUpdate({ userId: userId }, userDashBoard, {
+            new: true,
+            useFindAndModify: false
+
+        });
+
         res.json({
             questions: questionSet[0].questions
         });
@@ -72,11 +90,39 @@ module.exports.submitAnswers = async (req, res) => {
             new: true,
             useFindAndModify: false
         });
+        let userDashBoard = await dashboardModel.find({ userId: userId })[0];
+        for (let i = 0; i < userDashBoard.exams.length; i++) {
+            if (userDashBoard.exams[i].questionId == examId) {
+                userDashBoard.exams[i].marks = marks;
+                break;
+            }
+        }
+        await dashboardModel.findOneAndUpdate({ userId: userId }, userDashBoard, {
+            new: true,
+            useFindAndModify: false
+
+        });
         res.json({
             isSuccessful: true,
             marks: marks
         })
     } catch (error) {
         res.status(403).json({ error: error })
+    }
+}
+
+module.exports.dashBoard = async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const userDashBoard = await dashboardModel.find({ userId: userId });
+        if (userDashBoard) {
+            res.json({
+                dashBoard: userDashBoard
+            })
+        } else {
+            res.status(403).json({ error: "Can't find any dashboard information." });
+        }
+    } catch (error) {
+        res.status(403).json({ error: error });
     }
 }
