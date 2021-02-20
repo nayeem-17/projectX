@@ -52,7 +52,7 @@ module.exports.getQuestions = async (req, res) => {
         });
         // updating dashboard
 
-        let userDashBoard = await dashboardModel.find({ userId: userId })[0];
+        let userDashBoard = await dashboardModel.find({ userId: userId });
         userDashBoard.exams.push({
             questionId: examId,
             marks: 0
@@ -90,7 +90,7 @@ module.exports.submitAnswers = async (req, res) => {
             new: true,
             useFindAndModify: false
         });
-        let userDashBoard = await dashboardModel.find({ userId: userId })[0];
+        let userDashBoard = await dashboardModel.find({ userId: userId });
         for (let i = 0; i < userDashBoard.exams.length; i++) {
             if (userDashBoard.exams[i].questionId == examId) {
                 userDashBoard.exams[i].marks = marks;

@@ -16,7 +16,7 @@ module.exports.createQuestionSet = async (req, res) => {
             examId: data.uuid
         });
         // updating dashboard
-        let dashboard = await dashboardModel.find({ userId: req.body.userId })[0];
+        let dashboard = await dashboardModel.find({ userId: req.body.userId });
         dashboard.myquestionId.push(data.uuid)
         // sending response
         res.status(200).json({
