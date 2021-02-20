@@ -38,38 +38,39 @@ module.exports.userReg = async (req, res) => {
 }
 
 module.exports.getQuestions = async (req, res) => {
-    try {
-        const userId = req.body.userId;
-        const examId = req.params.examId;
-        // updating stat
-        let questionSet = await QuestionSetModel.find({ uuid: examId });
-        // console.log(questionSet)
-        questionSet[0].studentId.push(userId);
-        await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
-            new: true,
-            useFindAndModify: false
+    // try {
+    const userId = req.body.userId;
+    const examId = req.params.examId;
+    // updating stat
+    let questionSet = await QuestionSetModel.find({ uuid: examId });
+    // console.log(questionSet)
+    questionSet[0].studentId.push(userId);
+    await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
+        new: true,
+        useFindAndModify: false
 
-        });
-        // updating dashboard
+    });
+    // updating dashboard
+    let userDashBoard = await dashboardModel.find({ userId: userId });
+    console.log(userDashBoard);
+    userDashBoard = userDashBoard[0];
+    userDashBoard.exams.push({
+        questionId: examId,
+        marks: 0
+    });
+    await dashboardModel.findOneAndUpdate({ userId: userId }, userDashBoard, {
+        new: true,
+        useFindAndModify: false
 
-        let userDashBoard = await dashboardModel.find({ userId: userId });
-        userDashBoard.exams.push({
-            questionId: examId,
-            marks: 0
-        });
-        await dashboardModel.findOneAndUpdate({ userId: userId }, userDashBoard, {
-            new: true,
-            useFindAndModify: false
+    });
 
-        });
+    res.json({
+        questions: questionSet[0].questions
+    });
 
-        res.json({
-            questions: questionSet[0].questions
-        });
-
-    } catch (error) {
-        res.status(403).json({ error: error })
-    }
+    // } catch (error) {
+    //     res.status(403).json({ error: error })
+    // }
 }
 
 module.exports.submitAnswers = async (req, res) => {
@@ -91,6 +92,7 @@ module.exports.submitAnswers = async (req, res) => {
             useFindAndModify: false
         });
         let userDashBoard = await dashboardModel.find({ userId: userId });
+        userDashBoard = userDashBoard[0];
         for (let i = 0; i < userDashBoard.exams.length; i++) {
             if (userDashBoard.exams[i].questionId == examId) {
                 userDashBoard.exams[i].marks = marks;
@@ -114,7 +116,9 @@ module.exports.submitAnswers = async (req, res) => {
 module.exports.dashBoard = async (req, res) => {
     try {
         const userId = req.body.userId;
-        const userDashBoard = await dashboardModel.find({ userId: userId });
+        let userDashBoard = await dashboardModel.find({ userId: userId });
+        userDashBoard = userDashBoard[0];
+        console.log(userDashBoard)
         if (userDashBoard) {
             res.json({
                 dashBoard: userDashBoard

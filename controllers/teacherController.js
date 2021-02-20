@@ -1,5 +1,6 @@
 const { QuestionSetModel } = require("../models/questionset");
 const { statModel } = require("../models/stats");
+const { dashboardModel } = require('../models/dashboard');
 
 module.exports.createQuestionSet = async (req, res) => {
     const questionSet = {
@@ -17,6 +18,9 @@ module.exports.createQuestionSet = async (req, res) => {
         });
         // updating dashboard
         let dashboard = await dashboardModel.find({ userId: req.body.userId });
+        console.log(dashboard[0]);
+        dashboard = dashboard[0];
+        if (dashboard.myquestionId) dashboard.myquestionId = {};
         dashboard.myquestionId.push(data.uuid)
         // sending response
         res.status(200).json({
