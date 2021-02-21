@@ -181,6 +181,17 @@ paths:
           description: ok
         "404":
           description: error
+  /user/dashboard:
+    post:
+      tags:
+        - "user"
+      security:
+        - bearAuth: []
+      responses:
+        "200":
+          description: ok
+        "404":
+          description: error
 
   /user/registration:
     post:
