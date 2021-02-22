@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const { QuestionSetModel } = require("../models/questionset");
 const { statModel } = require("../models/stats");
 const { dashboardModel } = require('../models/dashboard');
@@ -5,7 +6,8 @@ const { dashboardModel } = require('../models/dashboard');
 module.exports.createQuestionSet = async (req, res) => {
     const questionSet = {
         teacherId: req.body.userId,
-        questions: req.body.questions
+        questions: req.body.questions,
+        uuid: crypto.randomBytes(5).toString('hex')
     };
     if (req.body.duration) questionSet.duration = req.body.duration;
     try {
