@@ -43,16 +43,16 @@ module.exports.getQuestions = async (req, res) => {
         const examId = req.params.examId;
         // updating stat
         let questionSet = await QuestionSetModel.find({ uuid: examId });
-        // console.log(questionSet)
         questionSet[0].studentId.push(userId);
         await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
             new: true,
             useFindAndModify: false
 
         });
+
         // updating dashboard
         let userDashBoard = await dashboardModel.find({ userId: userId });
-        console.log(userDashBoard);
+        // console.log(userDashBoard);
         userDashBoard = userDashBoard[0];
         userDashBoard.exams.push({
             questionId: examId,
@@ -63,9 +63,18 @@ module.exports.getQuestions = async (req, res) => {
             useFindAndModify: false
 
         });
+        let questions = questionSet[0].toJSON();
+        questions = questions.questions;
+        // console.log(questions);
+
+        for (let i = 0; i < questions.length; i++) {
+            delete questions[i].answer;
+            delete questions[i]._id;
+        }
+        // console.log(questions);
 
         res.json({
-            questions: questionSet[0].questions
+            questions
         });
 
     } catch (error) {
@@ -79,6 +88,11 @@ module.exports.submitAnswers = async (req, res) => {
         const examId = req.params.examId;
         const answerScript = req.body.answers;
         const marks = await checkanswer(examId, answerScript);
+        let correctAnswers = [];
+        const questions = (await QuestionSetModel.find({ uuid: examId }))[0].questions;
+        questions.forEach(element => {
+            correctAnswers.push(element.answer)
+        });
         const userStat = {
             marks: marks,
             studentId: userId,
@@ -106,7 +120,8 @@ module.exports.submitAnswers = async (req, res) => {
         });
         res.json({
             isSuccessful: true,
-            marks: marks
+            marks: marks,
+            correctAnswers
         })
     } catch (error) {
         res.status(403).json({ error: error })
