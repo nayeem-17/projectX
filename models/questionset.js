@@ -12,6 +12,9 @@ const schema = new mongoose.Schema({
     duration: {
         type: Number,
         default: 10
+    },
+    startingTime: {
+        type: Date
     }
 });
 module.exports.QuestionSetModel = mongoose.model('question', schema);

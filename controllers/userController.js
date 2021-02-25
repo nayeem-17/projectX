@@ -43,42 +43,58 @@ module.exports.getQuestions = async (req, res) => {
         const examId = req.params.examId;
         // updating stat
         let questionSet = await QuestionSetModel.find({ uuid: examId });
-        questionSet[0].studentId.push(userId);
-        await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
-            new: true,
-            useFindAndModify: false
+        const startingTime = questionSet[0].startingTime;
+        const { duration } = questionSet[0];
+        let currentDuration = Date.now() - startingTime.getTime();
+        currentDuration = currentDuration / 6000000;
+        if (currentDuration >= (duration)) {
+            res.status(402).json({ 'error': 'No time left' })
+        } else {
+            questionSet[0].studentId.push(userId);
+            await QuestionSetModel.findOneAndUpdate({ uuid: examId }, questionSet[0], {
+                new: true,
+                useFindAndModify: false
 
-        });
+            });
 
-        // updating dashboard
-        let userDashBoard = await dashboardModel.find({ userId: userId });
-        // console.log(userDashBoard);
-        userDashBoard = userDashBoard[0];
-        userDashBoard.exams.push({
-            questionId: examId,
-            marks: 0
-        });
-        await dashboardModel.findOneAndUpdate({ userId: userId }, userDashBoard, {
-            new: true,
-            useFindAndModify: false
+            // updating dashboard
+            let userDashBoard = await dashboardModel.find({ userId: userId });
+            // console.log(userDashBoard);
+            userDashBoard = userDashBoard[0];
+            userDashBoard.exams.push({
+                questionId: examId,
+                marks: 0
+            });
+            await dashboardModel.findOneAndUpdate({ userId: userId }, userDashBoard, {
+                new: true,
+                useFindAndModify: false
 
-        });
-        let questions = questionSet[0].toJSON();
-        questions = questions.questions;
-        // console.log(questions);
+            });
+            let questions = questionSet[0].toJSON();
+            questions = questions.questions;
+            // console.log(questions);
 
-        for (let i = 0; i < questions.length; i++) {
-            delete questions[i].answer;
-            delete questions[i]._id;
+            for (let i = 0; i < questions.length; i++) {
+                delete questions[i].answer;
+                delete questions[i]._id;
+            }
+            // console.log(questions);
+            console.log(startingTime);
+            res.json({
+                'questions': questions,
+                startTime: {
+                    'year': startingTime.getFullYear(),
+                    'month': startingTime.getUTCMonth() + 1,
+                    'date': startingTime.getUTCDate(),
+                    'hour': startingTime.getUTCHours(),
+                    'minute': startingTime.getUTCMinutes(),
+                    'second': startingTime.getUTCSeconds()
+                }
+            });
         }
-        // console.log(questions);
-
-        res.json({
-            questions
-        });
 
     } catch (error) {
-        res.status(403).json({ error: error })
+        res.status(403).json({ 'error': error })
     }
 }
 

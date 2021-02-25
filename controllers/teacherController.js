@@ -4,10 +4,12 @@ const { statModel } = require("../models/stats");
 const { dashboardModel } = require('../models/dashboard');
 
 module.exports.createQuestionSet = async (req, res) => {
+    const { date, month, year, hour, minute, second } = req.body.start;
     const questionSet = {
         teacherId: req.body.userId,
         questions: req.body.questions,
-        uuid: crypto.randomBytes(5).toString('hex')
+        uuid: crypto.randomBytes(5).toString('hex'),
+        startingTime: Date.UTC(year, month - 1, date, hour, minute, second)
     };
     if (req.body.duration) questionSet.duration = req.body.duration;
     try {
@@ -20,11 +22,12 @@ module.exports.createQuestionSet = async (req, res) => {
         });
         // updating dashboard
         let dashboard = await dashboardModel.find({ userId: req.body.userId });
-        console.log(dashboard[0]);
+        console.log(data.startingTime)
         dashboard = dashboard[0];
         if (dashboard.myquestionId) dashboard.myquestionId = {};
         dashboard.myquestionId.push(data.uuid)
         // sending response
+        const d = new Date()
         res.status(200).json({
             uuid: data.uuid,
             isSuccessful: true
