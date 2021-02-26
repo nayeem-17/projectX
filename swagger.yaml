@@ -111,6 +111,27 @@ paths:
             schema:
               type: object
               properties:
+                start:
+                  type: object
+                  properties:
+                    date:
+                      type: number
+                      example: 17
+                    month:
+                      type: number
+                      example: 12
+                    year:
+                      type: number
+                      example: 2021
+                    hour:
+                      type: number
+                      example: 15
+                    minute:
+                      type: number
+                      example: 30
+                    second:
+                      type: number
+                      example: 0
                 duration:
                   type: integer
                   example: 15
