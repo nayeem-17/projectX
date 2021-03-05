@@ -82,7 +82,7 @@ module.exports.getQuestions = async (req, res) => {
         console.log(startingTime);
         res.json({
             'questions': questions,
-            startTime: {
+            start: {
                 'year': startingTime.getFullYear(),
                 'month': startingTime.getUTCMonth() + 1,
                 'date': startingTime.getUTCDate(),
