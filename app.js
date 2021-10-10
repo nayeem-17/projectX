@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet')
 require('dotenv').config()
+const cors = require('cors')
 
 const teacherRouter = require('./routes/teacher');
 const userRouter = require('./routes/user');
@@ -18,6 +19,7 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(helmet());
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
