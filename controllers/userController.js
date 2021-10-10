@@ -140,6 +140,7 @@ module.exports.submitAnswers = async (req, res) => {
             correctAnswers
         })
     } catch (error) {
+        console.log(error);
         res.status(403).json({ error: error })
     }
 }

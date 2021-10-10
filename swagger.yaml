@@ -62,10 +62,13 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                type: integer
-              example: [1, 2, 1, 4, 2, 3, 1, 2]
+              type: object
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 2, 2]
       responses:
         "200":
           description: ok
